@@ -27,7 +27,7 @@ if UniverseID == 994732206 then
     task.wait(3)
 
     StarterGui:SetCore("SendNotification",{
-        Title = "Bamia Hub",
+        Title = "khoga Hub",
         Text = "Anh Độ Mixi",
         Duration = 2
     })
@@ -35,7 +35,7 @@ if UniverseID == 994732206 then
     task.wait(2)
 
     StarterGui:SetCore("SendNotification",{
-        Title = "Bamia Hub",
+        Title = "khoga Hub",
         Text = "Loader Success!",
         Duration = 5
     })
@@ -46,7 +46,7 @@ if UniverseID == 994732206 then
 
 else
     StarterGui:SetCore("SendNotification",{
-        Title = "Bamia Hub",
+        Title = "khoga Hub",
         Text = "Game Not Supported",
         Duration = 5
     })

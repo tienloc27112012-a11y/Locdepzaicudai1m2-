@@ -12,7 +12,7 @@ local UniverseID = HttpService:JSONDecode(
     game:HttpGet("https://apis.roblox.com/universes/v1/places/"..placeId.."/universe")
 ).universeId
 
-if UniverseID == 994732206 then
+if UniverseID == 98497689756369 then
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Graihub/notifywelcome/refs/heads/main/Gaynotify"))()
 
@@ -20,7 +20,7 @@ if UniverseID == 994732206 then
 
     StarterGui:SetCore("SendNotification",{
         Title = "locdepzaicudai1m2 Hub",
-        Text = "Nà Ná Na Na Ná",
+        Text = "locdepzaicudai1m2",
         Duration = 3
     })
 
@@ -28,7 +28,7 @@ if UniverseID == 994732206 then
 
     StarterGui:SetCore("SendNotification",{
         Title = "locdepzaicudai Hub",
-        Text = "Anh Độ Mixi",
+        Text = "locdepzaicudai1m2",
         Duration = 2
     })
 

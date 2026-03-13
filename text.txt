@@ -12,30 +12,30 @@ local UniverseID = HttpService:JSONDecode(
     game:HttpGet("https://apis.roblox.com/universes/v1/places/"..placeId.."/universe")
 ).universeId
 
-if UniverseID == 98497689756369 then
+if UniverseID == 994732206 then
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Graihub/notifywelcome/refs/heads/main/Gaynotify"))()
 
     task.wait(1)
 
     StarterGui:SetCore("SendNotification",{
-        Title = "locdepzaicudai1m2 Hub",
-        Text = "locdepzaicudai1m2",
+        Title = "khoga Hub",
+        Text = "Nà Ná Na Na Ná",
         Duration = 3
     })
 
     task.wait(3)
 
     StarterGui:SetCore("SendNotification",{
-        Title = "locdepzaicudai Hub",
-        Text = "locdepzaicudai1m2",
+        Title = "Bamia Hub",
+        Text = "Anh Độ Mixi",
         Duration = 2
     })
 
     task.wait(2)
 
     StarterGui:SetCore("SendNotification",{
-        Title = "locdepzaicudai1m2 Hub",
+        Title = "Bamia Hub",
         Text = "Loader Success!",
         Duration = 5
     })
@@ -46,7 +46,7 @@ if UniverseID == 98497689756369 then
 
 else
     StarterGui:SetCore("SendNotification",{
-        Title = "locdepzaicudai1m2 Hub",
+        Title = "Bamia Hub",
         Text = "Game Not Supported",
         Duration = 5
     })

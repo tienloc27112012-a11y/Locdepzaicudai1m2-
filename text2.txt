@@ -1,4 +1,4 @@
-epeat task.wait() until game:IsLoaded()
+repeat task.wait() until game:IsLoaded()
 
 _G.ThemeID = _G.ThemeID or nil
 _G.AutoTranslate = (_G.AutoTranslate == nil) and true or _G.AutoTranslate

@@ -2,7 +2,7 @@ loadstring(game:HttpGet(("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V
 
        local Window = MakeWindow({
          Hub = {
-         Title = "locdepzaicudai1m2",
+         Title = "locdepzaicudai1m2 hub-tổng hợp",
          Animation = "Youtube: locdepzaicudai1m2"
          },
         Key = {
@@ -21,7 +21,7 @@ loadstring(game:HttpGet(("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V
   })
 
        MinimizeButton({
-       Image = "http://www.roblox.com/asset/?id=98497689756369",
+       Image = "http://www.roblox.com/asset/?id=71947342494229",
        Size = {60, 60},
        Color = Color3.fromRGB(10, 10, 10),
        Corner = true,
@@ -30,38 +30,28 @@ loadstring(game:HttpGet(("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V
       })
       
 ------ Tab
-     local Tab1o = MakeTab({Name = "Script omg hub"})
-   
-     local Tab2o = MakeTab({Name = "Script catt-sta"})
+     local Tab1o = MakeTab({Name = "Script Farm"})
+     
+------- BUTTON
     
     AddButton(Tab1o, {
-     Name = "redz hub",
+     Name = "Redz Hub",
     Callback = function()
 	  local Settings = {
   JoinTeam = "Pirates"; -- Pirates/Marines
   Translator = true; -- true/false
 }
-
-AddButton(Tab2o, {
-     Name = "catt-sta",
-    Callback = function()
-	  local Settings = {
-  JoinTeam = "Pirates"; -- Pirates/Marines
-  Translator = true; -- true/false
-
-AddButton(Tab3o, {
-     Name = "6_7 hub",
-    Callback = function()
-	  local Settings = {
-  JoinTeam = "Pirates"; -- Pirates/Marines
-  Translator = true; -- true/false
-}
-
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/BloxFruits/refs/heads/main/Source.lua"))(Settings)
   end
   })
-loadstring(game:HttpGet("https://catt-star-autofarm.vercel.app/api/autofarm"))()
+AddButton(Tab2o, {
+     Name = "bamia Hub",
+    Callback = function()
+	  local Settings = {
+  JoinTeam = "Pirates"; -- Pirates/Marines
+  Translator = true; -- true/false
+}
 
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Graihub/Loader-bamiahub/refs/heads/main/bamia"))()
+  })

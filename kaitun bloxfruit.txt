@@ -1,0 +1,19 @@
+while wait() do
+    GetCurrentQuest()
+
+    if not HasQuest() then
+        GetQuest()
+    end
+
+    if char:FindFirstChild("Humanoid").Health <= 0 then
+        repeat wait() until char:FindFirstChild("Humanoid").Health > 0
+    end
+
+    local mob = GetMob()
+
+    if mob then
+        Attack(mob)
+    else
+        wait(1)
+    end
+end

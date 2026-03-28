@@ -1,0 +1,14 @@
+local ScreenGui = Instance.new("ScreenGui")
+local TextLabel = Instance.new("TextLabel")
+
+ScreenGui.Parent = game.CoreGui
+
+TextLabel.Parent = ScreenGui
+TextLabel.Size = UDim2.new(0, 300, 0, 50)
+TextLabel.Position = UDim2.new(0.5, -150, 0, 50)
+TextLabel.BackgroundTransparency = 1
+
+TextLabel.Text = "locdepzaicudai1m2"
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- đỏ
+TextLabel.TextScaled = true
+TextLabel.Font = Enum.Font.SourceSansBold

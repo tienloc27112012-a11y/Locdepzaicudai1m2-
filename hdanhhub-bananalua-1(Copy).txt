@@ -64,12 +64,12 @@ local Root = HumanoidRootPart
 -- ==========================================
 -- LOAD UI LIBRARY (HDanh Hub)
 -- ==========================================
-Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))()
+Library = loadstring(game:HttpGet("https://pastefy.app/hG83kxaH/raw"))()
 
 Window = Library:CreateWindow({
-    Title = "HDanh Hub",
+    Title = "locdepzaicudai1m2 Hub",
     Desc = "- Blox Fruit",
-    Image = "rbxassetid://123613996022560"
+    Image = "rbxassetid://71947342494229"
 })
 
 -- ==========================================
@@ -12061,4 +12061,6 @@ Tabs.Misc:AddButton({
 
 -- ===============================================================
 print('✅ HDanh Hub - Tất cả tính năng đã được load!')
-��c load!')
+��c load!')
+g đã được load!')
+��c load!')

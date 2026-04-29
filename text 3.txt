@@ -14,7 +14,7 @@ local T1UIColor = {
 	["Border Color"] = Color3.fromRGB(255, 206, 27),
 	["Click Effect Color"] = Color3.fromRGB(230, 230, 230),
 	["Setting Icon Color"] = Color3.fromRGB(230, 230, 230),
-	["Logo Image"] = "rbxassetid://128185233852701",
+	["Logo Image"] = "rbxassetid://71947342494229",
 	["Search Icon Color"] = Color3.fromRGB(240, 240, 230),
 	["Search Icon Highlight Color"] = Color3.fromRGB(255, 206, 27),
 	["GUI Text Color"] = Color3.fromRGB(235, 235, 230),
@@ -488,7 +488,7 @@ function Library:CreateWindow(Setting)
 	maingui.Position = UDim2.new(0.5, 0, 0.5, 0)
 	maingui.Selectable = true
 	maingui.Size = UDim2.new(1, 30, 1, 30)
-	maingui.Image = "rbxassetid://8068653048"
+	maingui.Image = "rbxassetid://71947342494229"
 	maingui.ScaleType = Enum.ScaleType.Slice
 	maingui.SliceCenter = Rect.new(15, 15, 175, 175)
 	maingui.SliceScale = 1.300
@@ -665,7 +665,7 @@ function Library:CreateWindow(Setting)
 	SearchIcon.BackgroundTransparency = 1
 	SearchIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
 	SearchIcon.Size = UDim2.new(0, 16, 0, 16)
-	SearchIcon.Image = "rbxassetid://8154282545"
+	SearchIcon.Image = "rbxassetid://71947342494229"
 	SearchIcon.ImageColor3 = Color3.fromRGB(240, 240, 230)
 
     SearchBox.Name = "SearchBox"
@@ -713,7 +713,7 @@ function Library:CreateWindow(Setting)
 	Shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Shadow.Size = UDim2.new(1, 40, 1, 40)
 	Shadow.ZIndex = 0
-	Shadow.Image = "rbxassetid://5028857084"
+	Shadow.Image = "rbxassetid://71947342494229"
 	Shadow.ImageTransparency = 0.35
 	Shadow.ScaleType = Enum.ScaleType.Slice
 	Shadow.SliceCenter = Rect.new(24, 24, 276, 276)
@@ -1029,7 +1029,7 @@ function Library:CreateWindow(Setting)
 		SearchIcon.BackgroundTransparency = 1.000
 		SearchIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
 		SearchIcon.Size = UDim2.new(0, 16, 0, 16)
-		SearchIcon.Image = "rbxassetid://8154282545"
+		SearchIcon.Image = "rbxassetid://71947342494229"
 		SearchIcon.ImageColor3 = getgenv().UIColor["Search Icon Color"]
 
 		SearchButton.Name = "Search Button"
@@ -1207,7 +1207,7 @@ function Library:CreateWindow(Setting)
 			LineShadow.Position = UDim2.new(0.5, 0, 0.5, 0)
 			LineShadow.Size = UDim2.new(1, 8, 1, 8)
 			LineShadow.ZIndex = 0
-			LineShadow.Image = "rbxassetid://5028857084"
+			LineShadow.Image = "rbxassetid://71947342494229"
 			LineShadow.ImageTransparency = 0.6
 			LineShadow.ScaleType = Enum.ScaleType.Slice
 			LineShadow.SliceCenter = Rect.new(24, 24, 276, 276)
@@ -1266,7 +1266,7 @@ function Library:CreateWindow(Setting)
 				visibility.Position = UDim2.new(0.5, 0, 0.5, 0)
 				visibility.Size = UDim2.new(1, -4, 1, -4)
 				visibility.ZIndex = 2
-				visibility.Image = "rbxassetid://3926307971"
+				visibility.Image = "rbxassetid://71947342494229"
 				visibility.ImageRectOffset = Vector2.new(84, 44)
 				visibility.ImageRectSize = Vector2.new(36, 36)
 				visibility.ImageTransparency = 1
@@ -1278,7 +1278,7 @@ function Library:CreateWindow(Setting)
 				visibility_off.Position = UDim2.new(0.5, 0, 0.5, 0)
 				visibility_off.Size = UDim2.new(1, -4, 1, -4)
 				visibility_off.ZIndex = 2
-				visibility_off.Image = "rbxassetid://3926307971"
+				visibility_off.Image = "rbxassetid://71947342494229"
 				visibility_off.ImageRectOffset = Vector2.new(564, 44)
 				visibility_off.ImageRectSize = Vector2.new(36, 36)
 				visibility_off.ImageTransparency = 0
@@ -1357,7 +1357,7 @@ function Library:CreateWindow(Setting)
 				checkbox.BackgroundTransparency = 1.000
 				checkbox.Position = UDim2.new(1, -5, 0.5, 3)
 				checkbox.Size = UDim2.new(0, 25, 0, 25)
-				checkbox.Image = "rbxassetid://4552505888"
+				checkbox.Image = "rbxassetid://71947342494229"
 				checkbox.ImageColor3 = getgenv().UIColor["Toggle Border Color"]
 				check.Name = "check"
 				check.Parent = checkbox
@@ -1548,7 +1548,7 @@ function Library:CreateWindow(Setting)
              ImageLabel_1.Position = UDim2.new(0.5, 0,0.5, 0)
              ImageLabel_1.Size = UDim2.new(1, 14,1, 14)
              ImageLabel_1.ZIndex = 0
-             ImageLabel_1.Image = "rbxassetid://5028857084"
+             ImageLabel_1.Image = "rbxassetid://71947342494229"
              ImageLabel_1.ImageTransparency = 0.7
              ImageLabel_1.ScaleType = Enum.ScaleType.Slice
              ImageLabel_1.SliceCenter = Rect.new(24, 24, 276, 276)
@@ -1783,7 +1783,7 @@ function Library:CreateWindow(Setting)
                 ImgDrop.BorderColor3 = Color3.fromRGB(27, 42, 53)
                 ImgDrop.Position = UDim2.new(1, -6, 0.5, 0)
                 ImgDrop.Size = UDim2.new(0, 15, 0, 15)
-                ImgDrop.Image = "rbxassetid://6954383209"
+                ImgDrop.Image = "rbxassetid://71947342494229"
                 ImgDrop.ImageColor3 = getgenv().UIColor["Dropdown Icon Color"]
                 
                 DropdownButton.Name = "DropdownButton"
@@ -2248,7 +2248,7 @@ function Library:CreateWindow(Setting)
 				ImgDrop.BorderColor3 = Color3.fromRGB(27, 42, 53)
 				ImgDrop.Position = UDim2.new(1, -6, 0.5, 0)
 				ImgDrop.Size = UDim2.new(0, 15, 0, 15)
-				ImgDrop.Image = "rbxassetid://6954383209"
+				ImgDrop.Image = "rbxassetid://71947342494229"
 				ImgDrop.ImageColor3 = getgenv().UIColor["Dropdown Icon Color"]
 				DropdownButton.Name = "DropdownButton"
 				DropdownButton.Parent = Topdrop

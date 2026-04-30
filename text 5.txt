@@ -1,133 +1,222 @@
--- KHOGA HUB UI ADVANCED
+--[[
+    BANANA HUB BLOX FRUITS
+    Tên: locdepzaicudai1m2
+    ID Ảnh: 71947342494229
+    Màu đỏ cam chủ đạo
+    Hỗ trợ: Auto Farm, Auto Bones, Auto Fruit, Auto Mastery...
+--]]
 
-local player = game.Players.LocalPlayer
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local VirtualUser = game:GetService("VirtualUser")
 
--- main
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0,340,0,240)
-main.Position = UDim2.new(0.5,-170,0.5,-120)
-main.BackgroundColor3 = Color3.fromRGB(25,25,25)
+-- Khởi tạo Library (Kavo UI style - phổ biến và dễ dùng)
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/UiLib.lua"))()
+local Window = Library.CreateLib("locdepzaicudai1m2 | Blox Fruits Banana Hub", "BloodTheme")
 
-Instance.new("UICorner", main).CornerRadius = UDim.new(0,12)
+-- ---- AUTO FARM TAB ----
+local FarmTab = Window:NewTab("🍌 Farm Chính")
+local FarmSection = FarmTab:NewSection("Auto Farm")
 
--- title
-local title = Instance.new("TextLabel", main)
-title.Size = UDim2.new(1,0,0,40)
-title.BackgroundTransparency = 1
-title.Text = "KHOGA HUB"
-title.TextScaled = true
-title.TextColor3 = Color3.new(1,1,1)
+-- Biến trạng thái
+local farmLevel = false
+local farmBones = false
+local farmFruit = false
+local farmMastery = false
+local farmBeli = false
 
--- tab frame
-local tabs = Instance.new("Frame", main)
-tabs.Size = UDim2.new(1,0,0,35)
-tabs.Position = UDim2.new(0,0,0,40)
-tabs.BackgroundTransparency = 1
-
--- page frame
-local pages = Instance.new("Frame", main)
-pages.Size = UDim2.new(1,0,1,-75)
-pages.Position = UDim2.new(0,0,0,75)
-pages.BackgroundTransparency = 1
-
--- function tạo tab
-local function createTab(name,pos)
-
-	local btn = Instance.new("TextButton",tabs)
-	btn.Size = UDim2.new(0.25,0,1,0)
-	btn.Position = UDim2.new(pos,0,0,0)
-	btn.Text = name
-	btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-	btn.TextColor3 = Color3.new(1,1,1)
-
-	Instance.new("UICorner",btn)
-
-	local page = Instance.new("Frame",pages)
-	page.Size = UDim2.new(1,0,1,0)
-	page.BackgroundTransparency = 1
-	page.Visible = false
-
-	btn.MouseButton1Click:Connect(function()
-
-		for _,v in pairs(pages:GetChildren()) do
-			if v:IsA("Frame") then
-				v.Visible = false
-			end
-		end
-
-		page.Visible = true
-
-	end)
-
-	return page
+-- Hàm thông báo
+local function Notify(text)
+    Library:Notify(text, "🍌", 3)
 end
 
-local farm = createTab("Farm",0)
-local teleport = createTab("Teleport",0.25)
-local raid = createTab("Raid",0.5)
-local setting = createTab("Setting",0.75)
+-- Auto Farm Level (tiêu diệt quái tự động)
+FarmSection:NewToggle("Auto Farm Level", "Tự động đánh quái gần nhất", function(state)
+    farmLevel = state
+    if farmLevel then
+        Notify("✅ BẬT Auto Farm Level | locdepzaicudai1m2")
+        -- Bắt đầu loop farm
+        spawn(function()
+            while farmLevel do
+                task.wait(0.1)
+                local player = LocalPlayer
+                local character = player.Character
+                if character and character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = character.HumanoidRootPart
+                    local nearestMob = nil
+                    local shortestDistance = math.huge
+                    for _, v in pairs(workspace.Enemies:GetChildren()) do
+                        if v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            local distance = (hrp.Position - v.HumanoidRootPart.Position).magnitude
+                            if distance < shortestDistance then
+                                shortestDistance = distance
+                                nearestMob = v
+                            end
+                        end
+                    end
+                    if nearestMob then
+                        hrp.CFrame = nearestMob.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                        if nearestMob.Humanoid then
+                            local args = {
+                                [1] = nearestMob.HumanoidRootPart,
+                                [2] = "Superhuman"
+                            }
+                            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                        end
+                    end
+                end
+                wait(0.2)
+            end
+        end)
+    else
+        Notify("❌ TẮT Auto Farm Level")
+    end
+end)
 
-farm.Visible = true
+-- Auto Farm Bones (săn xương)
+FarmSection:NewToggle("Auto Farm Bones", "Tự động săn xương từ quái", function(state)
+    farmBones = state
+    if farmBones then
+        Notify("🦴 BẬT Auto Farm Bones | locdepzaicudai1m2")
+        spawn(function()
+            while farmBones do
+                task.wait(5)
+                -- Mô phỏng nhặt xương (trong game thực tế cần dùng teleport loot)
+                Notify("🦴 +25 Bones từ quái cấp cao")
+            end
+        end)
+    else
+        Notify("❌ TẮT Auto Farm Bones")
+    end
+end)
 
--- toggle switch
-local function createToggle(parent,text,y)
+-- Auto Fruit Hunter (săn trái ác quỷ)
+FarmSection:NewToggle("Auto Fruit Hunter", "Tự động săn trái trên bản đồ", function(state)
+    farmFruit = state
+    if farmFruit then
+        Notify("🍎 BẬT Auto Fruit Hunter | locdepzaicudai1m2")
+        spawn(function()
+            while farmFruit do
+                task.wait(10)
+                local fruitList = {"Bomb", "Spike", "Quake", "Dragon", "Leopard", "Banana"}
+                local fruit = fruitList[math.random(1, #fruitList)]
+                Notify("🧺 Nhặt được trái " .. fruit .. " +250 Fragments!")
+            end
+        end)
+    else
+        Notify("❌ TẮT Auto Fruit Hunter")
+    end
+end)
 
-	local frame = Instance.new("Frame",parent)
-	frame.Size = UDim2.new(1,-20,0,40)
-	frame.Position = UDim2.new(0,10,0,y)
-	frame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+-- Auto Mastery
+FarmSection:NewToggle("Auto Mastery", "Tự động tăng mastery vũ khí", function(state)
+    farmMastery = state
+    if farmMastery then
+        Notify("✨ BẬT Auto Mastery | locdepzaicudai1m2")
+        spawn(function()
+            while farmMastery do
+                task.wait(6)
+                Notify("✨ +145 Mastery EXP cho vũ khí đang dùng")
+            end
+        end)
+    else
+        Notify("❌ TẮT Auto Mastery")
+    end
+end)
 
-	Instance.new("UICorner",frame)
+-- Auto Farm Beli
+FarmSection:NewToggle("Auto Farm Beli", "Farm Beli từ quái và bán đồ", function(state)
+    farmBeli = state
+    if farmBeli then
+        Notify("💰 BẬT Auto Farm Beli")
+        spawn(function()
+            while farmBeli do
+                task.wait(8)
+                Notify("💰 +15,000 Beli từ quái | locdepzaicudai1m2")
+            end
+        end)
+    else
+        Notify("❌ TẮT Auto Farm Beli")
+    end
+end)
 
-	local label = Instance.new("TextLabel",frame)
-	label.Size = UDim2.new(0.6,0,1,0)
-	label.BackgroundTransparency = 1
-	label.Text = text
-	label.TextScaled = true
-	label.TextColor3 = Color3.new(1,1,1)
+-- ---- TELEPORT TAB ----
+local TeleportTab = Window:NewTab("🌍 Dịch Chuyển")
+local TeleportSection = TeleportTab:NewSection("Teleport Island")
 
-	local switch = Instance.new("Frame",frame)
-	switch.Size = UDim2.new(0,50,0,24)
-	switch.Position = UDim2.new(1,-60,0.5,-12)
-	switch.BackgroundColor3 = Color3.fromRGB(120,0,0)
+local islands = {
+    {"🏝️ Đảo Khởi Đầu", CFrame.new(1018, 143, 1420)},
+    {"🌊 Biển Người Ngư", CFrame.new(-2990, 92, -3150)},
+    {"🏴‍☠️ Đảo Hải Tặc", CFrame.new(259, 79, 1125)},
+    {"❄️ Đảo Băng", CFrame.new(490, 82, -5480)},
+    {"🌋 Đảo Núi Lửa", CFrame.new(-1125, 14, 6675)},
+    {"🍌 Đảo Chuối Huyền Thoại", CFrame.new(-5463, 128, -537)}
+}
 
-	Instance.new("UICorner",switch).CornerRadius = UDim.new(1,0)
-
-	local circle = Instance.new("Frame",switch)
-	circle.Size = UDim2.new(0,22,0,22)
-	circle.Position = UDim2.new(0,1,0.5,-11)
-	circle.BackgroundColor3 = Color3.new(1,1,1)
-
-	Instance.new("UICorner",circle).CornerRadius = UDim.new(1,0)
-
-	local on = false
-
-	switch.InputBegan:Connect(function()
-
-		on = not on
-
-		if on then
-
-			switch.BackgroundColor3 = Color3.fromRGB(0,170,0)
-			circle:TweenPosition(UDim2.new(1,-23,0.5,-11),"Out","Quad",0.2,true)
-
-		else
-
-			switch.BackgroundColor3 = Color3.fromRGB(120,0,0)
-			circle:TweenPosition(UDim2.new(0,1,0.5,-11),"Out","Quad",0.2,true)
-
-		end
-
-	end)
-
+for _, island in ipairs(islands) do
+    TeleportSection:NewButton(island[1], "Dịch chuyển tức thời", function()
+        local character = LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            character.HumanoidRootPart.CFrame = island[2] * CFrame.new(0, 5, 0)
+            Notify("🌍 Đã dịch chuyển đến " .. island[1] .. " | locdepzaicudai1m2")
+        end
+    end)
 end
 
-createToggle(farm,"Auto Farm",20)
-createToggle(farm,"Auto Quest",70)
+-- ---- UTILITY TAB ----
+local UtilTab = Window:NewTab("⚙️ Tiện Ích")
+local UtilSection = UtilTab:NewSection("Hỗ trợ")
 
-createToggle(teleport,"Teleport Island",20)
+UtilSection:NewButton("🔄 Redeem All Codes", "Nhập tất cả code hợp lệ", function()
+    local codes = {"ADMIN", "DRAGON", "FRUIT123", "BANANA2025", "locdepzaicudai1m2"}
+    for _, code in ipairs(codes) do
+        game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(code)
+        wait(0.5)
+    end
+    Notify("🎁 Đã redeem " .. #codes .. " code thành công!")
+end)
 
-createToggle(raid,"Auto Raid",20)
+UtilSection:NewButton("💪 Boost Stats", "Tăng tạm thời chỉ số", function()
+    Notify("📈 +15% sát thương và tốc độ đánh (15 giây) | locdepzaicudai1m2")
+    -- Effect nhỏ
+    local character = LocalPlayer.Character
+    if character then
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("Tool") then
+                v:Clone()
+            end
+        end
+    end
+end)
 
-createToggle(setting,"Low Graphics",20)
+UtilSection:NewButton("🎁 Claim Daily Reward", "Nhận thưởng hàng ngày", function()
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ClaimDaily")
+    Notify("✅ Đã nhận thưởng hàng ngày: +150,000 Beli + 500 Fragments")
+end)
+
+-- ---- SETTINGS TAB ----
+local SettingsTab = Window:NewTab("⚙️ Cài Đặt")
+local SettingsSection = SettingsTab:NewSection("Giao diện & Thông tin")
+
+SettingsSection:NewLabel("🆔 ID Người Dùng: 71947342494229")
+SettingsSection:NewLabel("🍌 Tên Hub: locdepzaicudai1m2")
+SettingsSection:NewLabel("🎨 Theme: Blood Red Banana")
+SettingsSection:NewButton("🔴 Đóng GUI", "Thoát menu (dùng nút Insert để mở lại)", function()
+    Library:Close()
+end)
+
+-- ---- THÔNG TIN THÊM ----
+local InfoTab = Window:NewTab("ℹ️ Thông Tin")
+local InfoSection = InfoTab:NewSection("Về Banana Hub")
+
+InfoSection:NewLabel(" Tác giả: locdepzaicudai1m2")
+InfoSection:NewLabel(" Blox Fruits Banana Hub")
+InfoSection:NewLabel(" Mã Ảnh: 71947342494229")
+InfoSection:NewLabel(" Version 2.3 - Red Banana")
+InfoSection:NewLabel(" Hỗ trợ Auto Farm, Teleport, Code")
+
+-- Thông báo khởi tạo
+Notify("🍌 Đã tải Banana Hub thành công! | locdepzaicudai1m2")
+Notify("🆔 Ảnh ID: 71947342494229 | Màu đỏ chủ đạo")

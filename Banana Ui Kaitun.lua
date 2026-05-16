@@ -412,7 +412,7 @@ local UICorner = Instance.new("UICorner")
 local ImageLabel = Instance.new("ImageLabel")
 local TextButton = Instance.new("TextButton")
 
-LonelyHubBtn.Name = "Lonely Hub fake=) "  
+LonelyHubBtn.Name = "Lonely Hub Btn"  
 LonelyHubBtn.Parent = game:GetService("CoreGui")
 LonelyHubBtn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling  
 LonelyHubBtn.DisplayOrder = 10
@@ -483,5 +483,4 @@ TextButton.MouseButton1Down:Connect(
             blur.Size = 24
         end
     end  
-)  
 )

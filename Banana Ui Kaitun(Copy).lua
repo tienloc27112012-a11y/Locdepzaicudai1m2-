@@ -392,7 +392,7 @@ TextLabel_1.BorderSizePixel = 0
 TextLabel_1.Position = UDim2.new(0.5, 0,-0.0250000004, 0)
 TextLabel_1.Size = UDim2.new(0, 210,0, 50)
 TextLabel_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-TextLabel_1.Text = "discord.gg/2anc7nHw6b"
+TextLabel_1.Text = "https://discord.gg/SUAbpebJ5"
 TextLabel_1.TextColor3 = Color3.fromRGB(233,80,80)
 TextLabel_1.TextSize = 16
 
@@ -412,13 +412,13 @@ local UICorner = Instance.new("UICorner")
 local ImageLabel = Instance.new("ImageLabel")
 local TextButton = Instance.new("TextButton")
 
-LonelyHubBtn.Name = "Lonely Hub Btn"  
+LonelyHubBtn.Name = "Lonely Hub fake"  
 LonelyHubBtn.Parent = game:GetService("CoreGui")
 LonelyHubBtn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling  
 LonelyHubBtn.DisplayOrder = 10
 
-dutdit.Name = "dut dit"  
-dutdit.Parent = LonelyHubBtn  
+dutdit.Name = "cak"  
+dutdit.Parent = Lonely Hub fake =)  
 dutdit.AnchorPoint = Vector2.new(0.1, 0.1)  
 dutdit.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
 dutdit.Position = UDim2.new(0, 20, 0.1, -6)  

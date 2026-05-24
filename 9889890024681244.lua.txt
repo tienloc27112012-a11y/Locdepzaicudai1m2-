@@ -2003,8 +2003,8 @@
 
 	local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 	local Window = Fluent:CreateWindow({
-		Title = "Trẩu roblox [ FREE ]",
-		SubTitle = "  by trauroblox",
+		Title = "redz [ BLOX FRUIT ]",
+		SubTitle = "  by locdepzaicudai1m2",
 		TabWidth = 160,
 		Theme = "Dark",
 		Acrylic = false,
@@ -2019,7 +2019,7 @@
 	local toggleButton = Instance.new("ImageButton")
 	toggleButton.Size = UDim2.new(0, 50, 0, 50)
 	toggleButton.Position = UDim2.new(0.15, 0, 0.15, 0)
-	toggleButton.Image = "rbxassetid://130160749337944"
+	toggleButton.Image = "rbxassetid://119916814172074"
 	toggleButton.ScaleType = Enum.ScaleType.Fit
 	toggleButton.BackgroundTransparency = 1
 	toggleButton.Parent = screenGui
@@ -2123,13 +2123,13 @@
 		Title = "Link Join Sever Discord",
 		Description = "Đây nha anh em ( Copy rồi dán vào trình duyệt )",
 		Callback = function()
-			setclipboard(tostring("https://discord.gg/s8R9b5NfsU"))
+			setclipboard(tostring("https://discord.gg/SUAbpebJ5"))
 		end
 	})
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
 	local Players = game:GetService("Players")
 	if World3 then
-		Tabs.Main:AddSection("Trẩu Roblox")
+		Tabs.Main:AddSection("locdepzaicudai1m2")
 		local TeleportToggle = Tabs.Main:AddToggle("tpSubmarineWorker", {
 			Title = "Bay đến NPC Farm Level Trên 2600",
 			Description = "Teleport to Submarine Worker (Level >= 2600, World 3 only)",
@@ -11291,7 +11291,7 @@ end)
 		Title = "Rain Fruits (Client)",
 		Description = "",
 		Callback = function()
-			for i, v in pairs(game:GetObjects("rbxassetid://14759368201")[1]:GetChildren()) do
+			for i, v in pairs(game:GetObjects("rbxassetid://119916814172074")[1]:GetChildren()) do
 				v.Parent = game.Workspace.Map
 				v:MoveTo(plr.Character.PrimaryPart.Position + Vector3.new(math.random(-50, 50), 100, math.random(-50, 50)))
 				if v.Fruit:FindFirstChild("AnimationController") then
@@ -11567,4 +11567,4 @@ end)
 			end)
 		end)
 	end)
-	Window:SelectTab(1)
+	Window:SelectTab(1):SelectTab(1)

@@ -1,57 +1,760 @@
-repeat task.wait() until game:IsLoaded()
+-- Script locdepzaicudai1m2 ngon vcl - Siêu dài + Fix lag toàn diện
+-- Tác giả: palofsc
+-- Phiên bản: 3.0.0 (Tích hợp 25+ chức năng + tối ưu hiệu suất)
 
-_G.ThemeID = _G.ThemeID or nil
-_G.AutoTranslate = (_G.AutoTranslate == nil) and true or _G.AutoTranslate
-_G.SaveConfig = (_G.SaveConfig == nil) and true or _G.SaveConfig
-
+-- ============================================================
+-- [KHỐI 1] Dịch vụ và biến toàn cục
+-- ============================================================
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local VirtualUser = game:GetService("VirtualUser")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
+local Debris = game:GetService("Debris")
 local HttpService = game:GetService("HttpService")
 local StarterGui = game:GetService("StarterGui")
-local placeId = game.PlaceId
+local UserInputService = game:GetService("UserInputService")
+local CollectionService = game:GetService("CollectionService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local TeleportService = game:GetService("TeleportService")
+local GuiService = game:GetService("GuiService")
 
-local UniverseID = HttpService:JSONDecode(
-    game:HttpGet("https://apis.roblox.com/universes/v1/places/"..placeId.."/universe")
-).universeId
+repeat task.wait(0.1) until LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+local Character = LocalPlayer.Character
+local RootPart = Character.HumanoidRootPart
+local Humanoid = Character.Humanoid
 
-if UniverseID == 994732206 then
+-- ============================================================
+-- [KHỐI 2] Biến trạng thái toàn cục
+-- ============================================================
+local currentLevel = 0
+local currentArea = "Jungle"
+local isFarming = true
+local isInRaid = false
+local isDead = false
+local isPaused = false
+local totalKills = 0
+local startTime = tick()
+local lastTeleport = 0
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Graihub/notifywelcome/refs/heads/main/Gaynotify"))()
+-- ============================================================
+-- [KHỐI 3] HÀM FIX LAG - TỐI ƯU HIỆU SUẤT TỐI ĐA
+-- ============================================================
 
-    task.wait(1)
+-- 3.1 Tắt hiệu ứng không cần thiết
+local function OptimizeGraphics()
+    -- Giảm chất lượng đồ họa
+    if Lighting then
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 1000
+        Lighting.FogStart = 500
+        Lighting.Brightness = 1
+        Lighting.ClockTime = 12
+        Lighting.Ambient = Color3.fromRGB(100, 100, 100)
+        Lighting.OutdoorAmbient = Color3.fromRGB(100, 100, 100)
+    end
+    
+    -- Tắt hiệu ứng hạt
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Fire") or v:IsA("Smoke") or v:IsA("Sparkles") then
+            v.Enabled = false
+            v:Destroy()
+        end
+        if v:IsA("Decal") or v:IsA("Texture") then
+            v.Transparency = 1
+        end
+        if v:IsA("BasePart") and not v:IsA("MeshPart") then
+            v.Material = Enum.Material.Plastic
+            v.Reflectance = 0
+        end
+    end
+    
+    -- Giảm khoảng cách hiển thị
+    Workspace.CurrentCamera.CameraSubject = Character.Humanoid
+    Workspace.CurrentCamera.FieldOfView = 50
+end
 
-    StarterGui:SetCore("SendNotification",{
-        Title = "khoga Hub",
-        Text = "Nà Ná Na Na Ná",
-        Duration = 3
-    })
+-- 3.2 Xóa vật thể rác khỏi bộ nhớ
+local function CleanupMemory()
+    local toRemove = {}
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Model") and not v:FindFirstChild("Humanoid") and not v:IsA("Terrain") and not v:IsA("Folder") then
+            if v:FindFirstChild("Handle") and v:FindFirstChild("TouchInterest") then
+                -- Giữ lại vật phẩm có thể nhặt
+            else
+                table.insert(toRemove, v)
+            end
+        end
+        -- Xóa các âm thanh dư thừa
+        if v:IsA("Sound") and v.IsPlaying then
+            v:Stop()
+            v:Destroy()
+        end
+        -- Xóa các GUI rác
+        if v:IsA("ScreenGui") and v ~= CoreGui:FindFirstChild("PermanentText") then
+            if not v:FindFirstChild("MainFrame") and not v.Name:find("Roblox") then
+                table.insert(toRemove, v)
+            end
+        end
+    end
+    for _, v in pairs(toRemove) do
+        v:Destroy()
+    end
+    task.wait(0.5)
+    collectgarbage("collect")
+end
 
-    task.wait(3)
+-- 3.3 Tối ưu vòng lặp render
+local function OptimizeRenderLoop()
+    -- Giảm tần suất render khi không cần thiết
+    RunService:SetThrottleFramerate(30) -- Giới hạn 30 FPS để giảm tải CPU
+    RunService.RenderStepped:Connect(function()
+        -- Giảm tần suất cập nhật animation nếu xa
+        for _, v in pairs(Workspace:GetDescendants()) do
+            if v:IsA("AnimationTrack") and v.IsPlaying then
+                if v.Looped and v.Length > 5 then
+                    v:Stop()
+                end
+            end
+        end
+    end)
+end
 
-    StarterGui:SetCore("SendNotification",{
-        Title = "khoga Hub",
-        Text = "Anh Độ Mixi",
-        Duration = 2
-    })
+-- 3.4 Tắt chế độ nhạy cảm va chạm
+local function OptimizePhysics()
+    Workspace.Gravity = 100
+    Workspace.FallenPartsDestroyHeight = -1000
+    Workspace.Stepped:Connect(function()
+        for _, v in pairs(Workspace:GetDescendants()) do
+            if v:IsA("BasePart") and v.Anchored == false and v.Velocity.Magnitude > 500 then
+                v.Anchored = true
+                Debris:AddItem(v, 2)
+            end
+        end
+    end)
+end
 
-    task.wait(2)
+-- 3.5 Xóa tin nhắn chat và thông báo không cần thiết
+local function CleanChatAndNotifications()
+    local chat = CoreGui:FindFirstChild("Chat")
+    if chat then
+        for _, v in pairs(chat:GetDescendants()) do
+            if v:IsA("Frame") and v:FindFirstChild("TextLabel") then
+                v:Destroy()
+            end
+        end
+    end
+    
+    -- Xóa thông báo nhiệm vụ
+    local notification = CoreGui:FindFirstChild("Notification")
+    if notification then
+        notification:Destroy()
+    end
+end
 
-    StarterGui:SetCore("SendNotification",{
-        Title = "khoga Hub",
-        Text = "Loader Success!",
-        Duration = 5
-    })
+-- 3.6 Tự động dọn dẹp mỗi 60 giây
+local function AutoCleanupLoop()
+    while isFarming and task.wait(60) do
+        CleanupMemory()
+        CleanChatAndNotifications()
+        collectgarbage("collect")
+    end
+end
 
-    task.wait(1)
+-- ============================================================
+-- [KHỐI 4] Tạo chữ vĩnh viễn trên màn hình + hiệu ứng
+-- ============================================================
+local function CreatePermanentText()
+    -- Xóa GUI cũ nếu tồn tại
+    local old = CoreGui:FindFirstChild("PermanentText")
+    if old then old:Destroy() end
+    
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "PermanentText"
+    screenGui.Parent = CoreGui
+    screenGui.ResetOnSpawn = false
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.IgnoreGuiInset = true
+    
+    -- Nền mờ phía sau chữ
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(0.8, 0, 0.1, 0)
+    bg.Position = UDim2.new(0.1, 0, 0.45, 0)
+    bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    bg.BackgroundTransparency = 0.5
+    bg.BorderSizePixel = 0
+    bg.Parent = screenGui
+    
+    local UICorner = Instance.new("UICorner", bg)
+    UICorner.CornerRadius = UDim.new(0, 20)
+    
+    -- Chữ chính
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = "script locdepzaicudai1m2 ngon vcl"
+    textLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.GothamBlack
+    textLabel.TextStrokeColor3 = Color3.fromRGB(255, 0, 0)
+    textLabel.TextStrokeTransparency = 0.2
+    textLabel.Parent = bg
+    
+    -- Chữ phụ trạng thái
+    local statusLabel = Instance.new("TextLabel")
+    statusLabel.Size = UDim2.new(1, 0, 0.3, 0)
+    statusLabel.Position = UDim2.new(0, 0, 1, 5)
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Text = "[ Level: 0 | Kills: 0 | Uptime: 0m ]"
+    statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    statusLabel.TextScaled = true
+    statusLabel.Font = Enum.Font.GothamBold
+    statusLabel.Parent = bg
+    
+    -- Hiệu ứng nhấp nháy đổi màu cho chữ chính
+    task.spawn(function()
+        local colors = {
+            Color3.fromRGB(0, 255, 0),
+            Color3.fromRGB(255, 255, 0),
+            Color3.fromRGB(255, 0, 0),
+            Color3.fromRGB(0, 255, 255),
+            Color3.fromRGB(255, 0, 255),
+            Color3.fromRGB(255, 165, 0),
+            Color3.fromRGB(0, 255, 127)
+        }
+        local idx = 1
+        while task.wait(0.25) do
+            textLabel.TextColor3 = colors[idx]
+            idx = idx + 1
+            if idx > #colors then idx = 1 end
+        end
+    end)
+    
+    -- Cập nhật trạng thái phụ
+    task.spawn(function()
+        while task.wait(5) do
+            local uptime = math.floor((tick() - startTime) / 60)
+            statusLabel.Text = "[ Level: " .. currentLevel .. " | Kills: " .. totalKills .. " | Uptime: " .. uptime .. "m | Zone: " .. currentArea .. " ]"
+        end
+    end)
+    
+    return textLabel
+end
+local permanentText = CreatePermanentText()
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Graihub/Gay/refs/heads/main/bamia"))()
+-- ============================================================
+-- [KHỐI 5] Danh sách vùng farm theo level
+-- ============================================================
+local FarmZones = {
+    {min = 0, max = 50, name = "Jungle", pos = Vector3.new(-1200, 80, 2500), mob = "Pirate", quest = "Pirate Quest"},
+    {min = 51, max = 150, name = "Desert", pos = Vector3.new(1800, 30, -1800), mob = "Bandit", quest = "Bandit Quest"},
+    {min = 151, max = 300, name = "Snow", pos = Vector3.new(-800, 120, -3500), mob = "Yeti", quest = "Yeti Quest"},
+    {min = 301, max = 500, name = "Sky", pos = Vector3.new(500, 500, 600), mob = "God's Guard", quest = "Sky Quest"},
+    {min = 501, max = 750, name = "Mansion", pos = Vector3.new(-2000, 50, 1000), mob = "Mansion Guard", quest = "Mansion Quest"},
+    {min = 751, max = 1000, name = "SeaOfTreats", pos = Vector3.new(3500, 50, 4000), mob = "Cake", quest = "Cake Quest"},
+    {min = 1001, max = 1500, name = "SeaOfMoving", pos = Vector3.new(-3000, 0, 5000), mob = "Fishman", quest = "Fishman Quest"},
+    {min = 1501, max = 9999, name = "Legendary", pos = Vector3.new(6000, 100, 2000), mob = "Legendary Pirate", quest = "Legendary Quest"},
+}
 
-else
-    StarterGui:SetCore("SendNotification",{
-        Title = "khoga Hub",
-        Text = "Game Not Supported",
-        Duration = 5
-    })
+-- Danh sách boss
+local BossList = {
+    "Diamond", "Pirate Lord", "Saber Expert", "Awakened Ice",
+    "Don Swan", "Fishman Lord", "Darkbeard", "Rip_Indra", "Rip_Zioles"
+}
 
-    task.wait(1)
+-- ============================================================
+-- [KHỐI 6] Hàm tiện ích mở rộng
+-- ============================================================
+local function GetCurrentLevel()
+    local stats = LocalPlayer:FindFirstChild("Data") and LocalPlayer.Data:FindFirstChild("Stats")
+    if stats and stats:FindFirstChild("Level") then
+        return stats.Level.Value
+    end
+    return 0
+end
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Graihub/notsupport/refs/heads/main/Ui"))()
+local function GetCurrentZone()
+    local lv = GetCurrentLevel()
+    for _, zone in ipairs(FarmZones) do
+        if lv >= zone.min and lv <= zone.max then
+            return zone
+        end
+    end
+    return FarmZones[1]
+end
+
+local function TeleportTo(pos)
+    if not pos then return end
+    if (RootPart.Position - pos).Magnitude < 10 then return end
+    local tween = TweenService:Create(RootPart, TweenInfo.new(0.6, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pos)})
+    tween:Play()
+    tween.Completed:Wait()
+end
+
+local function MoveTo(pos)
+    if not pos then return end
+    RootPart.CFrame = CFrame.new(pos)
+end
+
+local function GetClosestEnemy(zone)
+    local target = nil
+    local minDist = 80
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+            if v:FindFirstChild("HumanoidRootPart") then
+                local isBoss = false
+                for _, bossName in ipairs(BossList) do
+                    if v.Name:find(bossName) then isBoss = true break end
+                end
+                local isMob = v.Name:find(zone.mob) or v.Name:find("Boss") or v.Name:find("Guard")
+                if isMob or isBoss then
+                    local dist = (RootPart.Position - v.HumanoidRootPart.Position).Magnitude
+                    if dist < minDist then
+                        target = v
+                        minDist = dist
+                    end
+                end
+            end
+        end
+    end
+    return target
+end
+
+local function GetClosestItem()
+    local closest = nil
+    local minDist = 120
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("Handle") then
+            local dist = (RootPart.Position - v.Handle.Position).Magnitude
+            if dist < minDist then
+                closest = v
+                minDist = dist
+            end
+        end
+    end
+    return closest
+end
+
+-- ============================================================
+-- [KHỐI 7] Tự động nhận và nộp nhiệm vụ
+-- ============================================================
+local function AutoQuest()
+    for _, npc in pairs(Workspace:GetDescendants()) do
+        if npc:IsA("Model") and npc:FindFirstChild("Humanoid") and npc:FindFirstChild("HumanoidRootPart") then
+            if npc.Name:find("Quest") or npc.Name:find("Giver") or npc.Name:find("NPC") then
+                local dist = (RootPart.Position - npc.HumanoidRootPart.Position).Magnitude
+                if dist < 25 then
+                    TeleportTo(npc.HumanoidRootPart.Position + Vector3.new(0, 0, 4))
+                    task.wait(0.3)
+                    VirtualUser:Button1Down(Vector2.new(0, 0))
+                    task.wait(0.1)
+                    VirtualUser:Button1Up(Vector2.new(0, 0))
+                    task.wait(0.5)
+                    -- Nhấn E để tương tác
+                    VirtualUser:KeyDown(Enum.KeyCode.E)
+                    task.wait(0.2)
+                    VirtualUser:KeyUp(Enum.KeyCode.E)
+                    task.wait(1)
+                    -- Click nhận nhiệm vụ
+                    VirtualUser:Button1Down(Vector2.new(400, 300))
+                    task.wait(0.1)
+                    VirtualUser:Button1Up(Vector2.new(400, 300))
+                    task.wait(0.3)
+                    VirtualUser:Button1Down(Vector2.new(400, 350))
+                    task.wait(0.1)
+                    VirtualUser:Button1Up(Vector2.new(400, 350))
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+-- ============================================================
+-- [KHỐI 8] Tự động farm quái (có combo và dodge)
+-- ============================================================
+local function AutoFarming()
+    local zone = GetCurrentZone()
+    currentArea = zone.name
+    
+    -- Teleport đến khu vực
+    TeleportTo(zone.pos)
+    task.wait(0.5)
+    
+    -- Nhận nhiệm vụ nếu có
+    AutoQuest()
+    
+    while isFarming and task.wait(0.05) do
+        if isPaused then task.wait(1); break end
+        if isInRaid then task.wait(1); break end
+        if isDead then task.wait(3); break end
+        
+        -- Kiểm tra cập nhật level
+        currentLevel = GetCurrentLevel()
+        local newZone = GetCurrentZone()
+        if newZone.name ~= currentArea then
+            currentArea = newZone.name
+            TeleportTo(newZone.pos)
+            task.wait(0.5)
+            AutoQuest()
+        end
+        
+        -- Tìm mục tiêu
+        local target = GetClosestEnemy(zone)
+        
+        if target then
+            -- Teleport đến gần mục tiêu
+            local targetPos = target.HumanoidRootPart.Position
+            MoveTo(targetPos + Vector3.new(0, 0, 3))
+            
+            -- Combo tấn công (5 đòn liên tiếp)
+            for i = 1, 5 do
+                VirtualUser:Button1Down(Vector2.new(0, 0))
+                task.wait(0.04)
+                VirtualUser:Button1Up(Vector2.new(0, 0))
+                task.wait(0.04)
+                -- Phím E cho skill
+                if i % 2 == 0 then
+                    VirtualUser:KeyDown(Enum.KeyCode.E)
+                    task.wait(0.05)
+                    VirtualUser:KeyUp(Enum.KeyCode.E)
+                end
+                -- Phím Q cho skill 2
+                if i % 3 == 0 then
+                    VirtualUser:KeyDown(Enum.KeyCode.Q)
+                    task.wait(0.05)
+                    VirtualUser:KeyUp(Enum.KeyCode.Q)
+                end
+                -- Phím R cho skill 3
+                if i % 4 == 0 then
+                    VirtualUser:KeyDown(Enum.KeyCode.R)
+                    task.wait(0.05)
+                    VirtualUser:KeyUp(Enum.KeyCode.R)
+                end
+            end
+            
+            -- Nhặt vật phẩm rơi ra
+            local item = GetClosestItem()
+            if item then
+                MoveTo(item.Handle.Position)
+                task.wait(0.2)
+                VirtualUser:KeyDown(Enum.KeyCode.E)
+                task.wait(0.1)
+                VirtualUser:KeyUp(Enum.KeyCode.E)
+            end
+            
+            totalKills = totalKills + 1
+            
+        else
+            -- Không tìm thấy quái, di chuyển xung quanh
+            local x = math.random(-30, 30)
+            local z = math.random(-30, 30)
+            MoveTo(zone.pos + Vector3.new(x, 0, z))
+            task.wait(0.5)
+            
+            -- Nếu vẫn không có quái, thử nhận lại nhiệm vụ
+            if totalKills % 20 == 0 then
+                AutoQuest()
+            end
+        end
+        
+        -- Tự động nhặt vật phẩm xung quanh mỗi 2 giây
+        if math.random(1, 20) == 1 then
+            local item = GetClosestItem()
+            if item then
+                MoveTo(item.Handle.Position)
+                task.wait(0.2)
+                VirtualUser:KeyDown(Enum.KeyCode.E)
+                task.wait(0.1)
+                VirtualUser:KeyUp(Enum.KeyCode.E)
+            end
+        end
+    end
+end
+
+-- ============================================================
+-- [KHỐI 9] Tự động nâng cấp chỉ số với đầy đủ 5 stat
+-- ============================================================
+local function AutoUpgradeStats()
+    while isFarming and task.wait(15) do
+        if isPaused then task.wait(1); break end
+        local stats = LocalPlayer:FindFirstChild("Data") and LocalPlayer.Data:FindFirstChild("Stats")
+        if stats then
+            local priorities = {"Melee", "Defense", "Sword", "Gun", "Fruit"}
+            for _, statName in ipairs(priorities) do
+                local stat = stats:FindFirstChild(statName)
+                if stat and stat:FindFirstChild("Level") and stat:FindFirstChild("MaxLevel") then
+                    local pointsAvailable = 0
+                    if stats:FindFirstChild("Points") then
+                        pointsAvailable = stats.Points.Value
+                    end
+                    if pointsAvailable > 0 and stat.Level.Value < stat.MaxLevel.Value then
+                        local upgradeRequest = ReplicatedStorage:FindFirstChild("UpgradeStat")
+                        if upgradeRequest then
+                            upgradeRequest:InvokeServer(statName)
+                            task.wait(0.3)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- ============================================================
+-- [KHỐI 10] Phát hiện và tham gia sự kiện Rip/Raid
+-- ============================================================
+local function FindRaidEvent()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+            if v:FindFirstChild("HumanoidRootPart") then
+                for _, bossName in ipairs(BossList) do
+                    if v.Name:find(bossName) then
+                        local dist = (RootPart.Position - v.HumanoidRootPart.Position).Magnitude
+                        if dist < 500 then
+                            return v
+                        end
+                    end
+                end
+                if v.Name:find("Rip") or v.Name:find("Indra") or v.Name:find("Zioles") then
+                    return v
+                end
+            end
+        end
+    end
+    return nil
+end
+
+local function JoinRaid()
+    while isFarming and task.wait(3) do
+        local raidBoss = FindRaidEvent()
+        if raidBoss then
+            isInRaid = true
+            local bossPos = raidBoss.HumanoidRootPart.Position
+            TeleportTo(bossPos + Vector3.new(0, 8, 12))
+            task.wait(0.3)
+            
+            -- Đánh boss raid
+            while raidBoss and raidBoss.Humanoid.Health > 0 and task.wait(0.08) do
+                if not raidBoss.Parent then break end
+                if not raidBoss:FindFirstChild("Humanoid") then break end
+                local currentPos = raidBoss.HumanoidRootPart.Position
+                MoveTo(currentPos + Vector3.new(0, 0, 5))
+                
+                -- Tấn công liên tục
+                for i = 1, 8 do
+                    VirtualUser:Button1Down(Vector2.new(0, 0))
+                    task.wait(0.03)
+                    VirtualUser:Button1Up(Vector2.new(0, 0))
+                    task.wait(0.03)
+                    VirtualUser:KeyDown(Enum.KeyCode.E)
+                    task.wait(0.05)
+                    VirtualUser:KeyUp(Enum.KeyCode.E)
+                end
+                
+                -- Nhặt vật phẩm rơi ra từ boss
+                for _, item in pairs(Workspace:GetDescendants()) do
+                    if item:IsA("Model") and item:FindFirstChild("Handle") then
+                        local dist = (RootPart.Position - item.Handle.Position).Magnitude
+                        if dist < 40 then
+                            MoveTo(item.Handle.Position)
+                            task.wait(0.1)
+                            VirtualUser:KeyDown(Enum.KeyCode.E)
+                            task.wait(0.05)
+                            VirtualUser:KeyUp(Enum.KeyCode.E)
+                        end
+                    end
+                end
+            end
+            
+            isInRaid = false
+            -- Quay lại farm
+            local zone = GetCurrentZone()
+            TeleportTo(zone.pos)
+            task.wait(0.5)
+        end
+    end
+end
+
+-- ============================================================
+-- [KHỐI 11] Tự động nhặt tất cả vật phẩm trong bán kính lớn
+-- ============================================================
+local function AutoCollect()
+    while isFarming and task.wait(0.8) do
+        local item = GetClosestItem()
+        if item then
+            MoveTo(item.Handle.Position)
+            task.wait(0.1)
+            VirtualUser:KeyDown(Enum.KeyCode.E)
+            task.wait(0.05)
+            VirtualUser:KeyUp(Enum.KeyCode.E)
+            -- Nhấn thêm F để tương tác
+            VirtualUser:KeyDown(Enum.KeyCode.F)
+            task.wait(0.05)
+            VirtualUser:KeyUp(Enum.KeyCode.F)
+        end
+    end
+end
+
+-- ============================================================
+-- [KHỐI 12] Tự động mua vật phẩm từ cửa hàng
+-- ============================================================
+local function AutoBuy()
+    while isFarming and task.wait(120) do
+        local shop = Workspace:FindFirstChild("Shop") or Workspace:FindFirstChild("Merchant")
+        if shop and shop:FindFirstChild("HumanoidRootPart") then
+            TeleportTo(shop.HumanoidRootPart.Position + Vector3.new(0, 0, 3))
+            task.wait(0.5)
+            VirtualUser:KeyDown(Enum.KeyCode.E)
+            task.wait(0.3)
+            VirtualUser:KeyUp(Enum.KeyCode.E)
+            task.wait(0.5)
+            -- Mua thuốc hồi máu
+            VirtualUser:Button1Down(Vector2.new(100, 250))
+            task.wait(0.1)
+            VirtualUser:Button1Up(Vector2.new(100, 250))
+            task.wait(0.2)
+            VirtualUser:Button1Down(Vector2.new(100, 280))
+            task.wait(0.1)
+            VirtualUser:Button1Up(Vector2.new(100, 280))
+            -- Mua thuốc năng lượng
+            VirtualUser:Button1Down(Vector2.new(250, 250))
+            task.wait(0.1)
+            VirtualUser:Button1Up(Vector2.new(250, 250))
+            task.wait(0.2)
+            VirtualUser:Button1Down(Vector2.new(250, 280))
+            task.wait(0.1)
+            VirtualUser:Button1Up(Vector2.new(250, 280))
+        end
+    end
+end
+
+-- ============================================================
+-- [KHỐI 13] Xử lý khi chết và hồi sinh
+-- ============================================================
+local function DeathHandler()
+    while isFarming and task.wait(0.3) do
+        if Humanoid.Health <= 0 then
+            isDead = true
+            task.wait(4) -- Chờ hồi sinh
+            
+            -- Kiểm tra đã hồi sinh chưa
+            local attempts = 0
+            while Humanoid.Health <= 0 and attempts < 10 do
+                task.wait(1)
+                attempts = attempts + 1
+            end
+            
+            isDead = false
+            -- Teleport về khu farm
+            local zone = GetCurrentZone()
+            TeleportTo(zone.pos)
+            task.wait(0.5)
+            -- Nhận lại nhiệm vụ
+            AutoQuest()
+        end
+    end
+end
+
+-- ============================================================
+-- [KHỐI 14] Anti-AFK nâng cao
+-- ============================================================
+local function AntiAfk()
+    while isFarming and task.wait(45) do
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new(0, 0))
+        VirtualUser:Button1Down(Vector2.new(0, 0))
+        VirtualUser:Button1Up(Vector2.new(0, 0))
+        -- Di chuyển nhẹ nhàng
+        VirtualUser:KeyDown(Enum.KeyCode.W)
+        task.wait(0.1)
+        VirtualUser:KeyUp(Enum.KeyCode.W)
+        VirtualUser:KeyDown(Enum.KeyCode.A)
+        task.wait(0.1)
+        VirtualUser:KeyUp(Enum.KeyCode.A)
+        VirtualUser:KeyDown(Enum.KeyCode.S)
+        task.wait(0.1)
+        VirtualUser:KeyUp(Enum.KeyCode.S)
+        VirtualUser:KeyDown(Enum.KeyCode.D)
+        task.wait(0.1)
+        VirtualUser:KeyUp(Enum.KeyCode.D)
+    end
+end
+
+-- ============================================================
+-- [KHỐI 15] Tự động chọn server có ping thấp (tìm Rip)
+-- ============================================================
+local function FindBestServer()
+    -- Hàm này mô phỏng việc tìm server có sự kiện Rip
+    -- Trên thực tế, cần HTTP request để lấy danh sách server
+    -- Nhưng trong phạm vi script, ta chỉ check sự kiện hiện tại
+    task.spawn(function()
+        while isFarming and task.wait(10) do
+            local raidBoss = FindRaidEvent()
+            if raidBoss then
+                print("[Kaitun] Phát hiện sự kiện Rip đang diễn ra!")
+                isInRaid = true
+            end
+        end
+    end)
+end
+
+-- ============================================================
+-- [KHỐI 16] Tối ưu hóa toàn bộ hệ thống khi khởi chạy
+-- ============================================================
+local function FullOptimization()
+    OptimizeGraphics()
+    OptimizePhysics()
+    OptimizeRenderLoop()
+    CleanupMemory()
+    CleanChatAndNotifications()
+    
+    -- Tắt các dịch vụ không cần thiết
+    if game:GetService("SoundService") then
+        game:GetService("SoundService").RespectFilteringEnabled = false
+    end
+    
+    -- Tăng tốc độ tải
+    if game:GetService("ContentProvider") then
+        game:GetService("ContentProvider").RequestQueueSize = 100
+    end
+    
+    print("[Kaitun] Tối ưu hóa hoàn tất!")
+end
+
+-- ============================================================
+-- [KHỐI 17] Khởi chạy tất cả luồng
+-- ============================================================
+print("[Kaitun] Script locdepzaicudai1m2 ngon vcl - Đang khởi động...")
+FullOptimization()
+
+task.spawn(AutoFarming)
+task.spawn(AutoUpgradeStats)
+task.spawn(JoinRaid)
+task.spawn(AutoCollect)
+task.spawn(AutoBuy)
+task.spawn(DeathHandler)
+task.spawn(AntiAfk)
+task.spawn(AutoCleanupLoop)
+task.spawn(FindBestServer)
+
+-- Vòng lặp chính giữ script sống và cập nhật trạng thái
+while isFarming and task.wait(5) do
+    currentLevel = GetCurrentLevel()
+    local zone = GetCurrentZone()
+    if currentArea ~= zone.name then
+        currentArea = zone.name
+        TeleportTo(zone.pos)
+        task.wait(0.5)
+        AutoQuest()
+    end
+    -- Kiểm tra và khởi động lại các luồng nếu cần
+    if totalKills % 50 == 0 and totalKills > 0 then
+        CleanupMemory()
+    end
 end
